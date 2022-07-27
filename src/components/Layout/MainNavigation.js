@@ -6,7 +6,7 @@ const MainNavigation = () => {
   const authenCtxCtx = useContext(AuthenCtxInit);
   const isLoggedIn = authenCtxCtx.ctxIsLoggedIn;
   const logout = () => {
-    authenCtxCtx.logoutHdl();
+    authenCtxCtx.ctxLogoutFun();
   }
   return (
     <header className={classes.header}>

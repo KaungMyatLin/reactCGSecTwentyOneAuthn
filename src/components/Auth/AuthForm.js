@@ -48,7 +48,8 @@ const AuthForm = () => {
       })
       .then (data => {
         console.log(data);
-        authenCtxCtx.ctxLoginFun(data.idToken);
+        const expirationTime = new Date(new Date().getTime() + (+data.expiresIn *1000));
+        authenCtxCtx.ctxLoginFun(data.idToken, expirationTime.toISOString());
         navigHook('/', {replace: true})
       })
       .catch ((err) => {
