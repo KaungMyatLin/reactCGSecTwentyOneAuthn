@@ -51,13 +51,17 @@ export const AuthenCtxProvider = (props) => {
         const { remainingTime } = objDeterminingDataForLogUserOut;
         logoutSetTimeOut = setTimeout(logoutHdl, remainingTime)
         // component's job is to render ui, watch for state change and rerender ui.
-        // if logoutHdl is not written as dependency,
-        // reexecution of useEffect func including new logoutSetTimeOut, new setTimeOut()
-        // will affect reexecution of it everytime remainingTime.
-        // useEffect protects every funcs, every variables + expression from reexecutiton (not become new).
-        // in order to not redeclare logoutHdl func when new logoutSetTimeOut, new setTimeOut(), put as dependency.
+        // useEffect is a more powerful tool alternative to componentDidMount, componentDidUpdate and componentWillUnmount.
+        // without 2nd args, useEffect by default will run on initial render and every rerender of component, 
+        // as well as on dismount if there is return callback.
+        // useEffect will compare the old dependency object === new dependency object.
+        // if logoutHdl is not written as dependency in this case,
+        // reexecution of useEffect func including re-assignment to logoutSetTimeOut, new obj setTimeOut() 
+        // will cause re-declaration of logoutHdl outside useEfect (thus new func obj) everytime remainingTime changes.
+        // useEffect dependency protects funcs redeclaration + assignment, variables redeclaration + assignment.
+        // without any dependency, useEffect will only run once.
     }
-    }, [objDeterminingDataForLogUserOut, ])
+    }, [objDeterminingDataForLogUserOut, logoutHdl])
     const ctxVal = {
         ctxToken: getToken,
         ctxIsLoggedIn: boolIsLoggedIn,
