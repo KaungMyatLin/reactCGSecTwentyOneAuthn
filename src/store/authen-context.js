@@ -61,7 +61,7 @@ export const AuthenCtxProvider = (props) => {
         // useEffect dependency protects funcs redeclaration + assignment, variables redeclaration + assignment.
         // without any dependency, useEffect will only run once.
     }
-    }, [objDeterminingDataForLogUserOut, logoutHdl])
+    }, [objDeterminingDataForLogUserOut])
     const ctxVal = {
         ctxToken: getToken,
         ctxIsLoggedIn: boolIsLoggedIn,
