@@ -1,4 +1,4 @@
-import react, { useState, useEffect } from "react";
+import react, { useState, useEffect, useCallback } from "react";
 let logoutSetTimeOut;
 const AuthenCtxInit = react.createContext({
     ctxToken: '',
@@ -31,20 +31,27 @@ export const AuthenCtxProvider = (props) => {
     }
     const [getToken, setToken] = useState(initAppStartToken);
     const boolIsLoggedIn = !!getToken;
-    const logoutHdl = () => {
-        setToken(null)
-        localStorage.removeItem('token')
-        localStorage.removeItem('expirationTime')
-        if (logoutSetTimeOut) { clearTimeout(logoutSetTimeOut) }
-    }
     // expirationTime is a string time (added currentLoginTime + convertToMilliSec( expiresInSec ) )
     const loginHdl = (argToken, expirationTime) => {
         setToken(argToken)
         localStorage.setItem('token', getToken)
         localStorage.setItem('expirationTime', expirationTime)
-        const remainingTime = calcRemainingTime(expirationTime);
+        // by the time removing more outdated code.
+        // const remainingTime = calcRemainingTime(expirationTime);
         logoutSetTimeOut = setTimeout(logoutHdl, 10000);
     }
+    // The 'logoutHdl' function makes the dependencies of useEffect Hook change on every render. 
+    // To fix this, wrap the definition of 'logoutHdl' in its own useCallback() Hook. 
+    // 1. Move logCount inside the useEffect hook and remove logoutHdl dependency.
+    // 2. Wrap logCount in a useCallback hook.
+    const logoutHdl = useCallback(() => {
+        setToken(null)
+        localStorage.removeItem('token')
+        localStorage.removeItem('expirationTime')
+        if (logoutSetTimeOut) { clearTimeout(logoutSetTimeOut) }
+    }
+    , []);
+
     useEffect(() => {
     if (objDeterminingDataForLogUserOut) {
         console.log(objDeterminingDataForLogUserOut)
